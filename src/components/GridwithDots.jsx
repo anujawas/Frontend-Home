@@ -1,43 +1,85 @@
-import React, { useState } from 'react';
-import './grid.css'; // You can create your own CSS file for styling
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import DragDrop from './DragDrop';
+import React, { useRef, useState } from "react";
+import { useDrag } from "react-dnd";
+import { DndProvider, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import "./grid.css"; // You can create your own CSS file for styling
+import { mergeRefs } from "react-merge-refs";
 
-const GridWithDots = () => {
-  const gridSize = 100;
-  const [elementPosition, setElementPosition] = useState({ x: 0, y: 0 });
 
-  const handleMouseMove = (event) => {
-    const boundingRect = event.target.getBoundingClientRect();
-    const offsetX = event.clientX - boundingRect.left;
-    const offsetY = event.clientY - boundingRect.top;
+const DraggableElement = ({ id, left, top }) => {
+  const [{ isDragging }, drag] = useDrag({
+    type: "box-drag",
+    item: { id, left, top },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+let a=0;
+  return (
+    
+    <div
+      id={id}
+      ref={drag}
+      className="draggable-element"
+      style={{
+        left: `${left}px`,
+        top: `${top}px`,
+        opacity: isDragging ? 0.5 : 1,
+      }}
+      onClick={(e)=>console.log(e.target)}
+    >
+      Button
+    </div>
+  );
+};
 
-    const snappedX = Math.round((offsetX / boundingRect.width) * gridSize) / gridSize;
-    const snappedY = Math.round((offsetY / boundingRect.height) * gridSize) / gridSize;
+function CanvasDrag() {
+  const [elements, setElements] = useState([]);
 
-    setElementPosition({ x: snappedX, y: snappedY });
+  const handleDrop = (item, x, y) => {
+    setElements((prevElements) => [
+      { id: elements.length+1, left: x, top: y },
+    ]);
+    console.log(document.getElementById('0').remove());
+
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
-    <DragDrop/>
-    <div className="editor-canvas" onMouseMove={handleMouseMove}>
-      <div className="dot-grid">
-        {Array.from({ length: gridSize * gridSize }, (_, index) => (
-          <div className="dot" key={index}></div>
-        ))}
-        <div
-          className="element"
-          style={{
-            left: `${elementPosition.x * 100}%`,
-            top: `${elementPosition.y * 100}%`,
-          }}
-        ></div>
+      <div className="editor-canvas">
+        <div className="canvas">
+          <DropZone onDrop={handleDrop} elements={elements} />
+          <DraggableElement id={0} left={100} top={100} />
+        </div>
       </div>
-    </div>
+
     </DndProvider>
   );
-};
+}
+function DropZone({ onDrop, elements }) {
 
-export default GridWithDots;
+  const [, drop] = useDrop({
+    accept: "box-drag",
+    drop: (item, monitor) => {
+      const offset = monitor.getSourceClientOffset();
+      if (offset) {
+        const x = offset.x;
+        const y = offset.y;
+        onDrop(item, x, y);
+      }
+    },
+  });
+  // drop(drag(ref));
+  return <div ref={drop} className="drop-zone">
+    {elements.map((element) => (
+            <DraggableElement
+              id={element.id}
+              left={element.left}
+              top={element.top}
+            />
+          ))}
+  </div>;
+
+}
+
+export default CanvasDrag;

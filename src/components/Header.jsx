@@ -9,6 +9,7 @@ const Header = () => {
         <span>Editor</span>
       </div>
       <div className="app-actions">
+        <button className='action-button' style={{backgroundColor:"black",color:"white"}}>{"</>"}</button>
         <button className="action-button">Save</button>
         <button className="action-button">Preview</button>
         <button className="action-button">Export</button>

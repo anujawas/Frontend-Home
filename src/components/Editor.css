@@ -6,6 +6,7 @@
 
 .editor-canvas {
   width: calc(100% - 250px);
+  position: relative;
 }
 
 .editor-picker {

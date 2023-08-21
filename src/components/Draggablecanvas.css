@@ -1,0 +1,31 @@
+.canvas {
+    display: flex;
+    height: 400px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+  }
+  
+  .canvas-elements {
+    position: relative;
+    flex: 1;
+  }
+  
+  .draggable-element {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: #007bff;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    cursor: grab;
+  }
+  
+  .drop-zone {
+    flex: 1;
+    background-color: #f7f7f7;
+    border: 1px dashed #aaa;
+  }
+  
