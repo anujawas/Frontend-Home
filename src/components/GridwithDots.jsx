@@ -50,12 +50,7 @@ function CanvasDrag() {
     setElements((prevElements) => [
       { id: elements.length + 1, left: x, top: y },
     ]);
-    if (document.getElementById('0')) {
-      const parent = document.getElementsByClassName("canvas")[0];
-      const child = document.getElementById('0');
-      parent.removeChild(child);
-    }
-    // { (document.getElementById('0')) ? document.getElementById('0').remove() : }
+
   };
 
   return (

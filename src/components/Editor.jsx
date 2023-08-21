@@ -10,23 +10,23 @@ const EditorCanvas = (props) => {
     <DndProvider backend={HTML5Backend}>
       <div className="editor-canvas">
         <h4> Put the drag and drop interface over here! </h4>
-        <DragDrop/>
+        <DragDrop />
       </div>
     </DndProvider>
   );
 };
-const Elements=[]
+const Elements = []
 const EditorPicker = (props) => {
-  const [element, setelement]=useState(Elements);
-  
-  const elementCreator=(type)=>{
-    if(type=="button"){
+  const [element, setelement] = useState(Elements);
+
+  const elementCreator = (type) => {
+    if (type == "button") {
       const button = React.createElement(
-            "button",
-           {className:"created-button"},
-           "maa ka bhosda button"
-        );
-      setelement([button,...element]);
+        "button",
+        { className: "created-button" },
+        "maa ka bhosda button"
+      );
+      setelement([button, ...element]);
       Elements.push(button);
     }
     console.log(Elements);
@@ -37,7 +37,7 @@ const EditorPicker = (props) => {
         {" "}
         Clicking these buttons should create new components on the canvas{" "}
       </h4>
-      <button onClick={()=>elementCreator("button")}> Create a button </button>
+      <button onClick={() => elementCreator("button")}> Create a button </button>
       <button> Create a text input </button>
       <button> Create a dropdown </button>
       <button> Create a table </button>
@@ -48,7 +48,7 @@ const EditorPicker = (props) => {
 const Editor = (props) => {
   return (
     <div className="editor">
-      <CanvasDrag Elements={Elements}/>
+      <CanvasDrag />
       <EditorPicker />
     </div>
   );
