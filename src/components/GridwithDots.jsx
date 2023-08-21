@@ -212,7 +212,7 @@ function CanvasDrag() {
       <div className="editor-picker">
         <h4>
           {" "}
-          Clicking these buttons should create new components on the canvas{" "}
+          Clicking these buttons will create new components on the canvas{" "}
         </h4>
         <button onDoubleClick={() => doubleclickHandle("Button")}> Create a button </button>
         <button onDoubleClick={() => doubleclickHandle("Input")}> Create a text input </button>
