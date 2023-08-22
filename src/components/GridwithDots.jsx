@@ -216,20 +216,19 @@ const DraggableLogo = ({ type }) => {
         my: 1,
         mx: 'auto',
         p: 2,
-        background: "#f0efed"
 
       }}
       ref={drag}
     >
       <Grid container wrap="nowrap" spacing={2}>
         {(type === "Button") ? <Grid item >
-          <Avatar variant="rounded"><img src={buttonlogo} alt="Button Logo" /></Avatar>
+          <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded"><img src={buttonlogo} alt="Button Logo" /></Avatar>
         </Grid> : (type === "Input") ? <Grid item>
-          <Avatar variant="rounded"><h2>Aa</h2></Avatar>
+          <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded"><h2 style={{ color: "black" }}>Aa</h2></Avatar>
         </Grid> : (type === "Table") ? <Grid item>
-          <Avatar variant="rounded"><AiOutlineTable /></Avatar>
+          <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded" ><AiOutlineTable color="black" /></Avatar>
         </Grid> : <Grid item>
-          <Avatar variant="rounded"><IoIosArrowDropdownCircle /></Avatar>
+          <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded"><IoIosArrowDropdownCircle color="black" /></Avatar>
         </Grid>
 
         }
