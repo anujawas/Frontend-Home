@@ -111,7 +111,6 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
           top: `${top}px`,
           opacity: isDragging ? 0.5 : 1,
         }}
-        onClick={(e) => { setSelectedType("button"); console.log(e); }}
       >
         Button
       </button>
@@ -119,7 +118,7 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
   } else if (type === "Input") {
     return (
       <div className="input-container"
-        onClick={(e) => { setSelectedType("input"); console.log(e); }}>
+      >
         <input id={id}
           ref={drag}
           className="draggable-element custom-input"
@@ -144,7 +143,6 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
           top: `${top}px`,
           opacity: isDragging ? 0.5 : 1,
         }}
-        onClick={(e) => { setSelectedType("table"); console.log(e); }}
       >
         <table className="custom-table"
         >
@@ -181,8 +179,7 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
           left: `${left}px`,
           top: `${top}px`,
           opacity: isDragging ? 0.5 : 1,
-        }}
-        onClick={(e) => { setSelectedType("dropdown"); console.log(e); }}>
+        }}>
         <div className="dropdown-container">
           <select
             className="custom-dropdown"
