@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -348,6 +348,44 @@ function CanvasDrag({ selectedType, setSelectedType }) {
   );
 }
 function DropZone({ onDrop, elements }) {
+  const canvasRef = useRef(null);
+  const GRID_SIZE = 25;
+  const [component, setComponent] = useState([...elements.button, ...elements.input, ...elements.table, ...elements.dropdown]);
+  const [draggingElement, setDraggingElement] = useState(null);
+
+  const handleMouseDown = (e) => {
+    const mouseX = e.nativeEvent.offsetX;
+    const mouseY = e.nativeEvent.offsetY;
+
+    setDraggingElement({
+      x: mouseX,
+      y: mouseY,
+    });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!draggingElement) return;
+
+    const mouseX = e.nativeEvent.offsetX;
+    const mouseY = e.nativeEvent.offsetY;
+
+    const snappedX = Math.round(mouseX / GRID_SIZE) * GRID_SIZE;
+    const snappedY = Math.round(mouseY / GRID_SIZE) * GRID_SIZE;
+
+    setDraggingElement({
+      x: snappedX,
+      y: snappedY,
+    });
+  };
+
+  const handleMouseUp = () => {
+    if (draggingElement) {
+      setComponent([...component, draggingElement]);
+      setDraggingElement(null);
+    }
+  };
+
+
 
   const [, drop] = useDrop({
     accept: "box-drag",
@@ -363,7 +401,11 @@ function DropZone({ onDrop, elements }) {
   // console.log(elements);\
   sessionStorage.setItem("elements", JSON.stringify(elements));
   console.log(elements);
-  return <div ref={drop} className="drop-zone">
+  return <div ref={drop} className="drop-zone dotted-background"
+    onMouseDown={handleMouseDown}
+    onMouseMove={handleMouseMove}
+    onMouseUp={handleMouseUp}
+    onMouseLeave={handleMouseUp}>
     {elements.button.map((element) => (
       <DraggableElement
         key={element.id}
