@@ -2,10 +2,70 @@ import React, { useState, useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { styled, alpha } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import InputBase from '@mui/material/InputBase';
+import SearchIcon from '@mui/icons-material/Search';
+import buttonlogo from "./button_logo.png"
+import { AiOutlineTable } from 'react-icons/ai'
+import { IoIosArrowDropdownCircle } from "react-icons/io"
 import "./grid.css";
 
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  maxWidth: 400,
+  color: theme.palette.text.primary,
+}));
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
 
-const DraggableElement = ({ id, left, top, type }) => {
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
+
+
+const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
   const [{ isDragging }, drag] = useDrag({
     type: "box-drag",
     item: { id, left, top, type },
@@ -51,14 +111,15 @@ const DraggableElement = ({ id, left, top, type }) => {
           top: `${top}px`,
           opacity: isDragging ? 0.5 : 1,
         }}
+        onClick={(e) => { setSelectedType("button"); console.log(e); }}
       >
         Button
       </button>
     );
   } else if (type === "Input") {
     return (
-      <div className="input-container">
-
+      <div className="input-container"
+        onClick={(e) => { setSelectedType("input"); console.log(e); }}>
         <input id={id}
           ref={drag}
           className="draggable-element custom-input"
@@ -82,7 +143,9 @@ const DraggableElement = ({ id, left, top, type }) => {
           left: `${left}px`,
           top: `${top}px`,
           opacity: isDragging ? 0.5 : 1,
-        }}>
+        }}
+        onClick={(e) => { setSelectedType("table"); console.log(e); }}
+      >
         <table className="custom-table"
         >
           <thead>
@@ -118,7 +181,8 @@ const DraggableElement = ({ id, left, top, type }) => {
           left: `${left}px`,
           top: `${top}px`,
           opacity: isDragging ? 0.5 : 1,
-        }}>
+        }}
+        onClick={(e) => { setSelectedType("dropdown"); console.log(e); }}>
         <div className="dropdown-container">
           <select
             className="custom-dropdown"
@@ -140,9 +204,45 @@ const DraggableElement = ({ id, left, top, type }) => {
   }
 
 };
-export { DraggableElement };
 
-function CanvasDrag() {
+const DraggableLogo = ({ type }) => {
+  const [, drag] = useDrag({
+    type: "box-drag",
+  });
+
+  return (
+    <StyledPaper
+      sx={{
+        my: 1,
+        mx: 'auto',
+        p: 2,
+        background: "#f0efed"
+
+      }}
+      ref={drag}
+    >
+      <Grid container wrap="nowrap" spacing={2}>
+        {(type === "Button") ? <Grid item >
+          <Avatar variant="rounded"><img src={buttonlogo} alt="Button Logo" /></Avatar>
+        </Grid> : (type === "Input") ? <Grid item>
+          <Avatar variant="rounded"><h2>Aa</h2></Avatar>
+        </Grid> : (type === "Table") ? <Grid item>
+          <Avatar variant="rounded"><AiOutlineTable /></Avatar>
+        </Grid> : <Grid item>
+          <Avatar variant="rounded"><IoIosArrowDropdownCircle /></Avatar>
+        </Grid>
+
+        }
+        <Grid style={{ marginLeft: "15px", display: "flex", flexDirection: "column", justifyContent: "left" }}>
+          <h3 style={{ textAlign: "left", height: "3px" }}>{type}</h3>
+          <Typography noWrap style={{ fontSize: "14px" }}>Double Click for {type} Component</Typography>
+        </Grid>
+      </Grid>
+    </StyledPaper>
+  );
+};
+
+function CanvasDrag({ selectedType, setSelectedType }) {
   const [elements, setElements] = useState({
     "button": [],
     "table": [],
@@ -155,6 +255,8 @@ function CanvasDrag() {
       setElements(ele)
     }
   }, [])
+
+
   const handleDrop = (item, x, y) => {
     console.log(item, x, y);
     if (item.type === "Button") {
@@ -197,28 +299,51 @@ function CanvasDrag() {
     console.log(type);
     setCreateElement(type)
   }
+  const enableDragandDrop = (type) => {
+
+  }
 
   return (
     <>
       <DndProvider backend={HTML5Backend}>
+
         <div className="editor-canvas">
           <div className="canvas">
             <DropZone onDrop={handleDrop} elements={elements} />
-            <DraggableElement id={0} left={100} top={100} type={createElement} />
+            <DraggableElement id={0} left={100} top={100} type={createElement} setSelectedType={setSelectedType} />
           </div>
         </div>
-
+        <Box sx={{ flexGrow: 1, overflow: 'hidden', px: 3 }}>
+          <div style={{ width: "100%", height: "20px" }}>
+          </div>
+          <Search style={{ border: "2px solid grey", borderRadius: "4px" }}>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search your component"
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </Search>
+          <div style={{ height: "30px" }}></div>
+          <h2 style={{ width: "100%", display: "flex", marginLeft: "2px" }}>
+            Components
+          </h2>
+          <div onDoubleClick={() => doubleclickHandle("Button")} onMouseDown={() => enableDragandDrop("Button")}>
+            <DraggableLogo type={"Button"} />
+          </div>
+          <div onDoubleClick={() => doubleclickHandle("Input")}>
+            <DraggableLogo type={"Input"} />
+          </div>
+          <div onDoubleClick={() => doubleclickHandle("Table")}>
+            <DraggableLogo type={"Table"} />
+          </div>
+          <div onDoubleClick={() => doubleclickHandle("dropdown")}>
+            <DraggableLogo type={"dropdown"} />
+          </div>
+        </Box>
       </DndProvider>
-      <div className="editor-picker">
-        <h4>
-          {" "}
-          Clicking these buttons will create new components on the canvas{" "}
-        </h4>
-        <button onDoubleClick={() => doubleclickHandle("Button")}> Create a button </button>
-        <button onDoubleClick={() => doubleclickHandle("Input")}> Create a text input </button>
-        <button onDoubleClick={() => doubleclickHandle("dropdown")}> Create a dropdown </button>
-        <button onDoubleClick={() => doubleclickHandle("Table")}> Create a table </button>
-      </div>
+
     </>
   );
 }
