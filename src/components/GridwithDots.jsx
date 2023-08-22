@@ -254,7 +254,6 @@ function CanvasDrag({ selectedType, setSelectedType }) {
 
 
   const handleDrop = (item, x, y) => {
-    console.log(item, x, y);
     if (item.type === "Button") {
       const data = {
         "button": [{ id: item.id, left: x, top: y, type: item.type }],
@@ -292,7 +291,6 @@ function CanvasDrag({ selectedType, setSelectedType }) {
   };
   const [createElement, setCreateElement] = useState("");
   const doubleclickHandle = (type) => {
-    console.log(type);
     setCreateElement(type)
   }
   const enableDragandDrop = (type) => {
@@ -394,9 +392,7 @@ function DropZone({ onDrop, elements }) {
       }
     },
   });
-  // console.log(elements);\
   sessionStorage.setItem("elements", JSON.stringify(elements));
-  console.log(elements);
   return <div ref={drop} className="drop-zone dotted-background"
     onMouseDown={handleMouseDown}
     onMouseMove={handleMouseMove}
