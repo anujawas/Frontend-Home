@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useDrag } from "react-dnd";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -14,7 +14,7 @@ import buttonlogo from "./button_logo.png"
 import { AiOutlineTable } from 'react-icons/ai'
 import { IoIosArrowDropdownCircle } from "react-icons/io"
 import "./grid.css";
-import { Button, Container } from "@mui/material";
+import { Container } from "@mui/material";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -464,7 +464,6 @@ function CanvasDrag({ selectedType, setSelectedType }) {
   );
 }
 function DropZone({ onDrop, elements, details }) {
-  const canvasRef = useRef(null);
   const GRID_SIZE = 25;
   const [component, setComponent] = useState([...elements.button, ...elements.input, ...elements.table, ...elements.dropdown]);
   const [draggingElement, setDraggingElement] = useState(null);
@@ -507,15 +506,13 @@ function DropZone({ onDrop, elements, details }) {
     accept: ["button", "input", "table", "dropdown"],
     drop: (item, monitor) => {
       const offset = monitor.getSourceClientOffset();
-      //console.log(item);
       if (offset) {
-        const x = Math.round(offset.x / GRID_SIZE) * GRID_SIZE;
-        const y = Math.round(offset.y / GRID_SIZE) * GRID_SIZE;
+        const x = Math.round((offset.x - 20) / GRID_SIZE) * GRID_SIZE;
+        const y = Math.round((offset.y - 80) / GRID_SIZE) * GRID_SIZE;
         onDrop(item, x, y);
       }
     },
   });
-  //console.log(details, elements);
   sessionStorage.setItem("details", JSON.stringify(details));
   sessionStorage.setItem("elements", JSON.stringify(elements));
   return <Container maxWidth="xl" ref={drop} className="drop-zone dotted-background"
