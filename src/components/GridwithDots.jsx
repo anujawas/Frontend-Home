@@ -274,9 +274,17 @@ function CanvasDrag({ selectedType, setSelectedType }) {
 
 
   const handleDrop = (item, x, y) => {
+    console.log(item);
     if (item.type === "button") {
       let doesExists = details["button"];
-      if (doesExists[doesExists.length - 1] !== item.id) {
+      let exits = false;
+      for (let i = 0; i < doesExists.length; i++) {
+        if (doesExists[i] === item.id) {
+          exits = true;
+        }
+      }
+      console.log(doesExists, exits);
+      if (exits === false) {
         setElements({
           "button": [...elements.button, { id: item.id, left: x, top: y, type: item.type }],
           "input": elements.input,
@@ -300,7 +308,14 @@ function CanvasDrag({ selectedType, setSelectedType }) {
       }
     } else if (item.type === "input") {
       let doesExists = details.input;
-      if (doesExists[doesExists.length - 1] !== item.id) {
+      let exits = false;
+      for (let i = 0; i < doesExists.length; i++) {
+        if (doesExists[i] === item.id) {
+          exits = true;
+        }
+      }
+      console.log(doesExists, exits);
+      if (exits === false) {
         setElements({
           "button": elements.button,
           "input": [...elements.input, { id: item.id, left: x, top: y, type: item.type }],
@@ -324,7 +339,14 @@ function CanvasDrag({ selectedType, setSelectedType }) {
       }
     } else if (item.type === "dropdown") {
       let doesExists = details.dropdown;
-      if (doesExists[doesExists.length - 1] !== item.id) {
+      let exits = false;
+      for (let i = 0; i < doesExists.length; i++) {
+        if (doesExists[i] === item.id) {
+          exits = true;
+        }
+      }
+      console.log(doesExists, exits);
+      if (exits === false) {
         setElements({
           "button": elements.button,
           "input": elements.input,
@@ -348,7 +370,14 @@ function CanvasDrag({ selectedType, setSelectedType }) {
       }
     } else if (item.type === "table") {
       let doesExists = details.table;
-      if (doesExists[doesExists.length - 1] !== item.id) {
+      let exits = false;
+      for (let i = 0; i < doesExists.length; i++) {
+        if (doesExists[i] === item.id) {
+          exits = true;
+        }
+      }
+      console.log(doesExists, exits);
+      if (exits === false) {
         setElements({
           "button": elements.button,
           "input": elements.input,
@@ -386,10 +415,10 @@ function CanvasDrag({ selectedType, setSelectedType }) {
           <div className="canvas">
             <DropZone onDrop={handleDrop} elements={elements} details={details} />
           </div>
-          {createElement === "button" ? <DraggableElement id={details.button[details.button.length - 1] + 1} left={100} top={100} type={createElement} /> :
-            createElement === "input" ? <DraggableElement id={details.input[details.input.length - 1] + 1} left={100} top={100} type={createElement} /> :
-              createElement === "table" ? <DraggableElement id={details.table[details.table.length - 1] + 1} left={100} top={100} type={createElement} /> :
-                createElement === "dropdown" ? <DraggableElement id={details.dropdown[details.dropdown.length - 1] + 1} left={100} top={100} type={createElement} /> : ""
+          {createElement === "button" ? <DraggableElement id={details.button.length} left={100} top={100} type={createElement} /> :
+            createElement === "input" ? <DraggableElement id={details.input.length} left={100} top={100} type={createElement} /> :
+              createElement === "table" ? <DraggableElement id={details.table.length} left={100} top={100} type={createElement} /> :
+                createElement === "dropdown" ? <DraggableElement id={details.dropdown.length} left={100} top={100} type={createElement} /> : ""
           }
         </div>
         <Box width={"350px"} height={"100%"} sx={{ flexGrow: 1, overflow: 'hidden', px: 3 }}>
@@ -409,22 +438,22 @@ function CanvasDrag({ selectedType, setSelectedType }) {
             Components
           </h2>
           <div onDoubleClick={() => doubleclickHandle("button")} >
-            <DraggableMenuItem id={details.button[details.button.length - 1] + 1} top={100} left={100} type={"button"}>
+            <DraggableMenuItem id={details.button.length} top={100} left={100} type={"button"}>
               <DraggableLogo type={"button"} />
             </DraggableMenuItem>
           </div>
           <div onDoubleClick={() => doubleclickHandle("input")}>
-            <DraggableMenuItem id={details.input[details.input.length - 1] + 1} top={100} left={100} type={"input"}>
+            <DraggableMenuItem id={details.input.length} top={100} left={100} type={"input"}>
               <DraggableLogo type={"input"} />
             </DraggableMenuItem>
           </div>
           <div onDoubleClick={() => doubleclickHandle("table")}>
-            <DraggableMenuItem id={details.table[details.table.length - 1] + 1} top={100} left={100} type={"table"} >
+            <DraggableMenuItem id={details.table.length} top={100} left={100} type={"table"} >
               <DraggableLogo type={"table"} />
             </DraggableMenuItem>
           </div>
           <div onDoubleClick={() => doubleclickHandle("dropdown")}>
-            <DraggableMenuItem id={details.dropdown[details.dropdown.length - 1] + 1} top={100} left={100} type={"dropdown"} >
+            <DraggableMenuItem id={details.dropdown.length} top={100} left={100} type={"dropdown"} >
               <DraggableLogo type={"dropdown"} />
             </DraggableMenuItem>
           </div>
@@ -486,6 +515,7 @@ function DropZone({ onDrop, elements, details }) {
       }
     },
   });
+  console.log(details, elements);
   sessionStorage.setItem("details", JSON.stringify(details));
   sessionStorage.setItem("elements", JSON.stringify(elements));
   return <Container maxWidth="xl" ref={drop} className="drop-zone dotted-background"
