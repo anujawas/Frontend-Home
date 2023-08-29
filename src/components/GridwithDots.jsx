@@ -14,6 +14,7 @@ import buttonlogo from "./button_logo.png"
 import { AiOutlineTable } from 'react-icons/ai'
 import { IoIosArrowDropdownCircle } from "react-icons/io"
 import "./grid.css";
+import { Button, Container } from "@mui/material";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -63,11 +64,26 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
+const DraggableMenuItem = ({ id, left, top, type, children }) => {
+  const [, drag] = useDrag({
+    type,
+    item: { id, left, top, type },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  return (
+    <div ref={drag}>
+      {children}
+    </div>
+  );
+};
 
 
-const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
+const DraggableElement = ({ id, left, top, type }) => {
   const [{ isDragging }, drag] = useDrag({
-    type: "box-drag",
+    type,
     item: { id, left, top, type },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -100,7 +116,7 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
-  if (type === "Button") {
+  if (type === "button") {
     return (
       <button
         id={id}
@@ -115,7 +131,7 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
         Button
       </button>
     );
-  } else if (type === "Input") {
+  } else if (type === "input") {
     return (
       <div className="input-container"
       >
@@ -133,7 +149,7 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
       </div>
     )
   }
-  else if (type === "Table") {
+  else if (type === "table") {
     return (
       <div className="draggable-element"
         id={id}
@@ -203,9 +219,6 @@ const DraggableElement = ({ id, left, top, type, setSelectedType }) => {
 };
 
 const DraggableLogo = ({ type }) => {
-  const [, drag] = useDrag({
-    type: "box-drag",
-  });
 
   return (
     <StyledPaper
@@ -215,14 +228,13 @@ const DraggableLogo = ({ type }) => {
         p: 2,
 
       }}
-      ref={drag}
     >
       <Grid container wrap="nowrap" spacing={2}>
-        {(type === "Button") ? <Grid item >
+        {(type === "button") ? <Grid item >
           <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded"><img src={buttonlogo} alt="Button Logo" /></Avatar>
-        </Grid> : (type === "Input") ? <Grid item>
+        </Grid> : (type === "input") ? <Grid item>
           <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded"><h2 style={{ color: "black" }}>Aa</h2></Avatar>
-        </Grid> : (type === "Table") ? <Grid item>
+        </Grid> : (type === "table") ? <Grid item>
           <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded" ><AiOutlineTable color="black" /></Avatar>
         </Grid> : <Grid item>
           <Avatar style={{ backgroundColor: "white", boxShadow: "0px 0px 2px 2px #B6D0E2" }} variant="rounded"><IoIosArrowDropdownCircle color="black" /></Avatar>
@@ -245,56 +257,125 @@ function CanvasDrag({ selectedType, setSelectedType }) {
     "input": [],
     "dropdown": []
   });
+  const [details, setDetails] = useState({
+    "button": [],
+    "table": [],
+    "input": [],
+    "dropdown": []
+  })
   const ele = JSON.parse(sessionStorage.getItem("elements"));
+  const det = JSON.parse(sessionStorage.getItem("details"));
   useEffect(() => {
     if (ele) {
       setElements(ele)
+      setDetails(det);
     }
   }, [])
 
 
   const handleDrop = (item, x, y) => {
-    if (item.type === "Button") {
-      const data = {
-        "button": [{ id: item.id, left: x, top: y, type: item.type }],
-        "input": elements.input,
-        "dropdown": elements.dropdown,
-        "table": elements.table
+    if (item.type === "button") {
+      let doesExists = details["button"];
+      if (doesExists[doesExists.length - 1] !== item.id) {
+        setElements({
+          "button": [...elements.button, { id: item.id, left: x, top: y, type: item.type }],
+          "input": elements.input,
+          "dropdown": elements.dropdown,
+          "table": elements.table
+        });
+        details.button.push(item.id);
+      } else {
+        let data = elements.button;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].id === item.id) {
+            data[i] = { id: item.id, left: x, top: y, type: item.type };
+          }
+        }
+        setElements({
+          "button": data,
+          "input": elements.input,
+          "dropdown": elements.dropdown,
+          "table": elements.table
+        })
       }
-      setElements(data);
-    } else if (item.type === "Input") {
-      const data = {
-        "button": elements.button,
-        "input": [{ id: item.id, left: x, top: y, type: item.type }],
-        "dropdown": elements.dropdown,
-        "table": elements.table
+    } else if (item.type === "input") {
+      let doesExists = details.input;
+      if (doesExists[doesExists.length - 1] !== item.id) {
+        setElements({
+          "button": elements.button,
+          "input": [...elements.input, { id: item.id, left: x, top: y, type: item.type }],
+          "dropdown": elements.dropdown,
+          "table": elements.table
+        });
+        details.input.push(item.id);
+      } else {
+        let data = elements.input;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].id === item.id) {
+            data[i] = { id: item.id, left: x, top: y, type: item.type };
+          }
+        }
+        setElements({
+          "button": elements.button,
+          "input": data,
+          "dropdown": elements.dropdown,
+          "table": elements.table
+        })
       }
-      setElements(data);
-    } else if (item.type === "Table") {
-      const data = {
-        "button": elements.button,
-        "input": elements.input,
-        "dropdown": elements.dropdown,
-        "table": [{ id: item.id, left: x, top: y, type: item.type }]
-      }
-      setElements(data);
     } else if (item.type === "dropdown") {
-      const data = {
-        "button": elements.button,
-        "input": elements.input,
-        "dropdown": [{ id: item.id, left: x, top: y, type: item.type }],
-        "table": elements.table
+      let doesExists = details.dropdown;
+      if (doesExists[doesExists.length - 1] !== item.id) {
+        setElements({
+          "button": elements.button,
+          "input": elements.input,
+          "dropdown": [...elements.dropdown, { id: item.id, left: x, top: y, type: item.type }],
+          "table": elements.table
+        });
+        details.dropdown.push(item.id);
+      } else {
+        let data = elements.dropdown;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].id === item.id) {
+            data[i] = { id: item.id, left: x, top: y, type: item.type };
+          }
+        }
+        setElements({
+          "button": elements.button,
+          "input": elements.input,
+          "dropdown": data,
+          "table": elements.table
+        })
       }
-      setElements(data);
+    } else if (item.type === "table") {
+      let doesExists = details.table;
+      if (doesExists[doesExists.length - 1] !== item.id) {
+        setElements({
+          "button": elements.button,
+          "input": elements.input,
+          "dropdown": elements.dropdown,
+          "table": [...elements.table, { id: item.id, left: x, top: y, type: item.type }]
+        });
+        details.table.push(item.id);
+      } else {
+        let data = elements.table;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].id === item.id) {
+            data[i] = { id: item.id, left: x, top: y, type: item.type };
+          }
+        }
+        setElements({
+          "button": elements.button,
+          "input": elements.input,
+          "dropdown": elements.dropdown,
+          "table": data
+        })
+      }
     }
     setCreateElement("")
   };
   const [createElement, setCreateElement] = useState("");
   const doubleclickHandle = (type) => {
     setCreateElement(type)
-  }
-  const enableDragandDrop = (type) => {
-
   }
 
   return (
@@ -303,11 +384,15 @@ function CanvasDrag({ selectedType, setSelectedType }) {
 
         <div className="editor-canvas">
           <div className="canvas">
-            <DropZone onDrop={handleDrop} elements={elements} />
-            <DraggableElement id={0} left={100} top={100} type={createElement} setSelectedType={setSelectedType} />
+            <DropZone onDrop={handleDrop} elements={elements} details={details} />
           </div>
+          {createElement === "button" ? <DraggableElement id={details.button[details.button.length - 1] + 1} left={100} top={100} type={createElement} /> :
+            createElement === "input" ? <DraggableElement id={details.input[details.input.length - 1] + 1} left={100} top={100} type={createElement} /> :
+              createElement === "table" ? <DraggableElement id={details.table[details.table.length - 1] + 1} left={100} top={100} type={createElement} /> :
+                createElement === "dropdown" ? <DraggableElement id={details.dropdown[details.dropdown.length - 1] + 1} left={100} top={100} type={createElement} /> : ""
+          }
         </div>
-        <Box sx={{ flexGrow: 1, overflow: 'hidden', px: 3 }}>
+        <Box width={"350px"} height={"100%"} sx={{ flexGrow: 1, overflow: 'hidden', px: 3 }}>
           <div style={{ width: "100%", height: "20px" }}>
           </div>
           <Search style={{ border: "2px solid grey", borderRadius: "4px" }}>
@@ -323,17 +408,25 @@ function CanvasDrag({ selectedType, setSelectedType }) {
           <h2 style={{ width: "100%", display: "flex", marginLeft: "2px" }}>
             Components
           </h2>
-          <div onDoubleClick={() => doubleclickHandle("Button")} onMouseDown={() => enableDragandDrop("Button")}>
-            <DraggableLogo type={"Button"} />
+          <div onDoubleClick={() => doubleclickHandle("button")} >
+            <DraggableMenuItem id={details.button[details.button.length - 1] + 1} top={100} left={100} type={"button"}>
+              <DraggableLogo type={"button"} />
+            </DraggableMenuItem>
           </div>
-          <div onDoubleClick={() => doubleclickHandle("Input")}>
-            <DraggableLogo type={"Input"} />
+          <div onDoubleClick={() => doubleclickHandle("input")}>
+            <DraggableMenuItem id={details.input[details.input.length - 1] + 1} top={100} left={100} type={"input"}>
+              <DraggableLogo type={"input"} />
+            </DraggableMenuItem>
           </div>
-          <div onDoubleClick={() => doubleclickHandle("Table")}>
-            <DraggableLogo type={"Table"} />
+          <div onDoubleClick={() => doubleclickHandle("table")}>
+            <DraggableMenuItem id={details.table[details.table.length - 1] + 1} top={100} left={100} type={"table"} >
+              <DraggableLogo type={"table"} />
+            </DraggableMenuItem>
           </div>
           <div onDoubleClick={() => doubleclickHandle("dropdown")}>
-            <DraggableLogo type={"dropdown"} />
+            <DraggableMenuItem id={details.dropdown[details.dropdown.length - 1] + 1} top={100} left={100} type={"dropdown"} >
+              <DraggableLogo type={"dropdown"} />
+            </DraggableMenuItem>
           </div>
         </Box>
       </DndProvider>
@@ -341,7 +434,7 @@ function CanvasDrag({ selectedType, setSelectedType }) {
     </>
   );
 }
-function DropZone({ onDrop, elements }) {
+function DropZone({ onDrop, elements, details }) {
   const canvasRef = useRef(null);
   const GRID_SIZE = 25;
   const [component, setComponent] = useState([...elements.button, ...elements.input, ...elements.table, ...elements.dropdown]);
@@ -382,18 +475,20 @@ function DropZone({ onDrop, elements }) {
 
 
   const [, drop] = useDrop({
-    accept: "box-drag",
+    accept: ["button", "input", "table", "dropdown"],
     drop: (item, monitor) => {
       const offset = monitor.getSourceClientOffset();
+      //console.log(item);
       if (offset) {
-        const x = offset.x;
-        const y = offset.y;
+        const x = Math.round(offset.x / GRID_SIZE) * GRID_SIZE;
+        const y = Math.round(offset.y / GRID_SIZE) * GRID_SIZE;
         onDrop(item, x, y);
       }
     },
   });
+  sessionStorage.setItem("details", JSON.stringify(details));
   sessionStorage.setItem("elements", JSON.stringify(elements));
-  return <div ref={drop} className="drop-zone dotted-background"
+  return <Container maxWidth="xl" ref={drop} className="drop-zone dotted-background"
     onMouseDown={handleMouseDown}
     onMouseMove={handleMouseMove}
     onMouseUp={handleMouseUp}
@@ -434,7 +529,7 @@ function DropZone({ onDrop, elements }) {
         type={element.type}
       />
     ))}
-  </div>;
+  </Container>;
 }
 
 export default CanvasDrag;

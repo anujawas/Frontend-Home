@@ -4,11 +4,6 @@
   display: flex;
 }
 
-.editor-canvas {
-  width: calc(100% - 350px);
-  position: relative;
-}
-
 .editor-picker {
   padding: 25px;
   width: 250px;

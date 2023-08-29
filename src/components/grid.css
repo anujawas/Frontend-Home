@@ -40,8 +40,13 @@ img {
   border: 2px dashed #007bff;
 }
 
-canvas {
+.editor-canvas {
+  width: calc(100% - 350px);
   position: relative;
+}
+
+canvas {
+  position: absolute;
   width: 100%;
   height: 100%;
 }
