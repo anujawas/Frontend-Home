@@ -274,7 +274,7 @@ function CanvasDrag({ selectedType, setSelectedType }) {
 
 
   const handleDrop = (item, x, y) => {
-    console.log(item);
+    //console.log(item);
     if (item.type === "button") {
       let doesExists = details["button"];
       let exits = false;
@@ -283,7 +283,7 @@ function CanvasDrag({ selectedType, setSelectedType }) {
           exits = true;
         }
       }
-      console.log(doesExists, exits);
+      //console.log(doesExists, exits);
       if (exits === false) {
         setElements({
           "button": [...elements.button, { id: item.id, left: x, top: y, type: item.type }],
@@ -314,7 +314,7 @@ function CanvasDrag({ selectedType, setSelectedType }) {
           exits = true;
         }
       }
-      console.log(doesExists, exits);
+      //console.log(doesExists, exits);
       if (exits === false) {
         setElements({
           "button": elements.button,
@@ -345,7 +345,7 @@ function CanvasDrag({ selectedType, setSelectedType }) {
           exits = true;
         }
       }
-      console.log(doesExists, exits);
+      //console.log(doesExists, exits);
       if (exits === false) {
         setElements({
           "button": elements.button,
@@ -376,7 +376,7 @@ function CanvasDrag({ selectedType, setSelectedType }) {
           exits = true;
         }
       }
-      console.log(doesExists, exits);
+      //console.log(doesExists, exits);
       if (exits === false) {
         setElements({
           "button": elements.button,
@@ -515,7 +515,7 @@ function DropZone({ onDrop, elements, details }) {
       }
     },
   });
-  console.log(details, elements);
+  //console.log(details, elements);
   sessionStorage.setItem("details", JSON.stringify(details));
   sessionStorage.setItem("elements", JSON.stringify(elements));
   return <Container maxWidth="xl" ref={drop} className="drop-zone dotted-background"
